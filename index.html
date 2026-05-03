@@ -1651,7 +1651,7 @@
         document.querySelectorAll("[data-split], [data-split-hero]").forEach(splitHeading);
 
         if (!prefersReducedMotion) {
-          document.querySelectorAll(".section-title").forEach(function (title) {
+          document.querySelectorAll(".section-title, .booking-title").forEach(function (title) {
             const chars = title.querySelectorAll(".char");
             if (!chars.length) return;
             gsap.from(chars, {
