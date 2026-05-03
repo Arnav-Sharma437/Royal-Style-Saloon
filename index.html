@@ -54,25 +54,41 @@
       transition: opacity 0.6s ease, visibility 0.6s;
     }
     .page-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .loader-logo {
-      font-family: var(--font-serif);
-      font-size: clamp(3rem, 8vw, 5rem);
-      font-weight: 700;
-      background: var(--gold-shimmer);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: shimmer-text 3s linear infinite;
-      margin-bottom: 1.5rem;
+    .loader-visual {
+      position: relative;
+      width: min(220px, 52vw);
+      height: min(220px, 52vw);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .loader-ring {
-      width: 56px;
-      height: 56px;
-      border: 3px solid rgba(201, 168, 76, 0.2);
-      border-top-color: var(--accent-gold);
+    .loader-orbit {
+      position: absolute;
+      inset: 0;
       border-radius: 50%;
-      animation: spin 0.9s linear infinite;
+      border: 3px solid rgba(201, 168, 76, 0.12);
+      border-top-color: var(--accent-gold);
+      border-right-color: rgba(201, 168, 76, 0.45);
+      animation: spin 1s linear infinite;
+      pointer-events: none;
+    }
+    .loader-orbit::after {
+      content: "";
+      position: absolute;
+      inset: -14px;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      animation: spin 2.8s linear infinite reverse;
+    }
+    .loader-logo-img {
+      width: 68%;
+      height: auto;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      object-fit: cover;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 40px rgba(0, 200, 122, 0.12), 0 0 80px rgba(201, 168, 76, 0.08);
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes shimmer-text {
@@ -159,18 +175,17 @@
     }
     .logo-wrap {
       display: flex;
-      align-items: baseline;
-      gap: 0.5rem;
+      align-items: center;
+      gap: 0.75rem;
     }
-    .logo-rs {
-      font-family: var(--font-serif);
-      font-size: 1.75rem;
-      font-weight: 700;
-      background: var(--gold-shimmer);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+    .brand-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 0 24px rgba(201, 168, 76, 0.2);
+      border: 1px solid rgba(201, 168, 76, 0.35);
     }
     .logo-text {
       font-family: var(--font-serif);
@@ -280,10 +295,12 @@
       width: 100%;
       height: 100%;
       display: block;
+      z-index: 1;
     }
     .hero-fallback {
       position: absolute;
       inset: 0;
+      z-index: 0;
       background: var(--gradient-page);
       display: none;
     }
@@ -293,7 +310,7 @@
       inset: 0;
       pointer-events: none;
       background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.75) 100%);
-      z-index: 1;
+      z-index: 2;
     }
     .hero-inner {
       position: relative;
@@ -478,6 +495,7 @@
     .services-section {
       background: var(--gradient-page);
       position: relative;
+      overflow: hidden;
     }
     .section-head {
       padding: 5rem 4% 2rem;
@@ -501,7 +519,6 @@
       color: transparent;
     }
     .services-pin-wrap {
-      height: 400vh;
       position: relative;
     }
     .services-pin-sticky {
@@ -540,9 +557,30 @@
       border: 1px solid rgba(0, 200, 122, 0.15);
       transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
     }
+    .service-card-face--front {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
     .service-card:hover .service-card-face--front {
       box-shadow: 0 0 40px rgba(0, 200, 122, 0.35);
     }
+    .service-card-media {
+      height: 140px;
+      width: 100%;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      transform: translateZ(0);
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .service-card-media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 20%, rgba(5, 5, 5, 0.92));
+    }
+    .service-card:hover .service-card-media { transform: scale(1.06); }
     .service-card:hover .service-card-face {
       backdrop-filter: blur(28px);
       -webkit-backdrop-filter: blur(28px);
@@ -578,10 +616,12 @@
     }
     .service-card:hover .shimmer-sweep::after { left: 120%; }
     .service-icon {
-      width: 64px;
-      height: 64px;
-      margin: 2rem auto 1rem;
+      width: 52px;
+      height: 52px;
+      margin: 0.85rem auto 0.5rem;
       color: var(--accent-emerald);
+      position: relative;
+      z-index: 1;
     }
     .service-name {
       font-family: var(--font-serif);
@@ -659,12 +699,16 @@
     .gallery-section {
       padding: 5rem 4% 4rem;
       background: var(--bg-rich);
+      position: relative;
+      overflow: hidden;
     }
     .gallery-masonry {
       column-count: 3;
       column-gap: 1.25rem;
       max-width: 1200px;
       margin: 3rem auto 0;
+      transform-style: preserve-3d;
+      perspective: 1400px;
     }
     .gallery-item {
       break-inside: avoid;
@@ -674,6 +718,7 @@
       overflow: hidden;
       cursor: pointer;
       transform-origin: center;
+      transform-style: preserve-3d;
       transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .gallery-item:hover { transform: scale(1.08); z-index: 2; }
@@ -681,6 +726,13 @@
       min-height: 180px;
       background: linear-gradient(145deg, #0d1f17 0%, #2d6a4f 45%, #050505 100%);
       position: relative;
+    }
+    .gallery-placeholder img {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      object-fit: cover;
+      display: block;
     }
     .gallery-item:nth-child(2) .gallery-placeholder { min-height: 240px; }
     .gallery-item:nth-child(3) .gallery-placeholder { min-height: 200px; }
@@ -768,6 +820,8 @@
       background: linear-gradient(135deg, #2d6a4f, #0a0a0a);
       border: 3px solid transparent;
       transition: border-color 0.35s, box-shadow 0.35s;
+      overflow: hidden;
+      object-fit: cover;
     }
     .team-card:hover .team-avatar {
       border-color: var(--accent-gold);
@@ -961,6 +1015,38 @@
       transform: translateY(80px);
     }
 
+    /* --- Ambient 3D accents (CSS + JS scroll tie-in) --- */
+    #ambient-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+    }
+    main > section,
+    .marquee-strip,
+    footer {
+      position: relative;
+      z-index: 1;
+    }
+    .lux-orb {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      background: radial-gradient(circle at 30% 30%, rgba(0, 200, 122, 0.08), transparent 65%);
+      pointer-events: none;
+      animation: orb-float 14s ease-in-out infinite;
+      transform-style: preserve-3d;
+    }
+    .lux-orb--lg { width: min(380px, 60vw); height: min(380px, 60vw); }
+    .lux-orb--sm { width: min(160px, 30vw); height: min(160px, 30vw); animation-duration: 11s; }
+    @keyframes orb-float {
+      0%, 100% { transform: translate3d(0, 0, 0) rotateX(12deg) rotateY(-8deg); opacity: 0.45; }
+      50% { transform: translate3d(12px, -20px, 0) rotateX(-6deg) rotateY(10deg); opacity: 0.75; }
+    }
+
     /* --- Responsive --- */
     @media (max-width: 768px) {
       .nav-links, .nav-cta { display: none; }
@@ -971,7 +1057,26 @@
       .hero-badge { display: none; }
       body { cursor: auto; }
       .cursor-dot, .cursor-ring { display: none; }
-      #hero-canvas { display: none !important; }
+      .services-mobile-stack .services-track {
+        flex-direction: column;
+        transform: none !important;
+        padding: 2rem 6%;
+        gap: 1.5rem;
+      }
+      .services-mobile-stack .service-card-wrap {
+        flex: 1 1 auto !important;
+        width: 100%;
+        max-width: 420px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .services-mobile-stack .services-pin-sticky {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        padding: 2rem 0 4rem;
+      }
+      #ambient-canvas { opacity: 0.22; }
     }
     @media (max-width: 480px) {
       .gallery-masonry { column-count: 1; }
@@ -984,11 +1089,15 @@
 <body>
   <!-- Page loader -->
   <div class="page-loader" id="pageLoader" aria-hidden="true">
-    <div class="loader-logo">RS</div>
-    <div class="loader-ring" aria-hidden="true"></div>
+    <div class="loader-visual">
+      <div class="loader-orbit" aria-hidden="true"></div>
+      <img class="loader-logo-img" src="assets/royal-style-logo.png" alt="" width="200" height="200" decoding="async" />
+    </div>
   </div>
 
   <!-- Noise -->
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+
   <svg class="noise-overlay" aria-hidden="true">
     <filter id="noise">
       <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch" />
@@ -1006,7 +1115,7 @@
   <!-- Nav -->
   <header class="navbar" id="navbar">
     <a href="#home" class="logo-wrap">
-      <span class="logo-rs">RS</span>
+      <img class="brand-logo" src="assets/royal-style-logo.png" alt="Royal Style" width="52" height="52" decoding="async" />
       <span class="logo-text">Royal Style</span>
     </a>
     <nav class="nav-links" aria-label="Primary">
@@ -1070,6 +1179,7 @@
         <p class="section-label">What We Offer</p>
         <h2 class="section-title" data-split>Signature Services</h2>
       </div>
+      <div class="lux-orb lux-orb--lg" style="top: 12%; right: -8%;" aria-hidden="true"></div>
       <div class="services-pin-wrap" id="servicesPinWrap">
         <div class="services-pin-sticky">
           <div class="services-track" id="servicesTrack">
@@ -1078,6 +1188,7 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
+                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Hair styling"></div>
                   <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M32 8L44 20v16c0 8-6 16-12 20-6-4-12-12-12-20V20L32 8z" stroke="currentColor" stroke-width="2"/>
                     <path d="M26 28h12M26 34h12" stroke="currentColor" stroke-width="2"/>
@@ -1095,6 +1206,7 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
+                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Bridal makeup"></div>
                   <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <circle cx="32" cy="26" r="12" stroke="currentColor" stroke-width="2"/>
                     <path d="M20 44c4-6 20-6 24 0" stroke="currentColor" stroke-width="2"/>
@@ -1112,6 +1224,7 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
+                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Skin care facial"></div>
                   <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <ellipse cx="32" cy="30" rx="18" ry="14" stroke="currentColor" stroke-width="2"/>
                     <path d="M20 38c2 8 22 8 24 0" stroke="currentColor" stroke-width="2"/>
@@ -1129,6 +1242,7 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
+                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Nail art"></div>
                   <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M20 44c0-12 8-20 12-28 4 8 12 16 12 28" stroke="currentColor" stroke-width="2"/>
                     <circle cx="32" cy="20" r="4" stroke="currentColor" stroke-width="2"/>
@@ -1146,6 +1260,7 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
+                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Spa and massage"></div>
                   <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M18 40h28M24 32l8-16 8 16" stroke="currentColor" stroke-width="2"/>
                     <circle cx="32" cy="46" r="6" stroke="currentColor" stroke-width="2"/>
@@ -1163,6 +1278,7 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
+                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Hair color"></div>
                   <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M22 40c4-16 16-24 20-24s16 8 20 24" stroke="currentColor" stroke-width="2"/>
                     <path d="M16 44h32" stroke="currentColor" stroke-width="2"/>
@@ -1208,20 +1324,21 @@
 
     <!-- Gallery -->
     <section class="gallery-section reveal-section" id="gallery">
+      <div class="lux-orb lux-orb--sm" style="bottom: 8%; left: 4%;" aria-hidden="true"></div>
       <div class="section-head">
         <p class="section-label">Portfolio</p>
         <h2 class="section-title" data-split>Gallery</h2>
       </div>
       <div class="gallery-masonry">
-        <div class="gallery-item"><div class="gallery-placeholder"><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Hair</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Bridal</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Color</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Skin</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Nails</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Spa</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Styling</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Makeup</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Editorial</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Salon interior" loading="lazy" width="600" height="400" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Salon</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1633681926022-84c22e8cb2d6?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Bridal hair" loading="lazy" width="600" height="500" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Bridal</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1492103236225-3a3df08f27db?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Hair color" loading="lazy" width="600" height="420" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Color</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b1?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Facial treatment" loading="lazy" width="600" height="450" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Skin</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Nail art" loading="lazy" width="600" height="380" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Nails</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Spa" loading="lazy" width="600" height="520" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Spa</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Hair styling" loading="lazy" width="600" height="400" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Styling</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Makeup" loading="lazy" width="600" height="480" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Makeup</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Editorial beauty" loading="lazy" width="600" height="420" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Editorial</span></div></div></div>
       </div>
       <div class="gallery-cta-wrap">
         <a href="#booking" class="btn btn-outline btn-ripple magnetic-target">View Full Gallery</a>
@@ -1237,28 +1354,28 @@
       <div class="team-grid">
         <div class="team-card" data-tilt>
           <div class="team-card-inner">
-            <div class="team-avatar" aria-hidden="true"></div>
+            <img class="team-avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&amp;fit=crop&amp;w=400&amp;h=400&amp;q=85" alt="" width="120" height="120" loading="lazy" />
             <h3 class="team-name">Ananya Rao</h3>
             <p class="team-role">Creative Director</p>
           </div>
         </div>
         <div class="team-card" data-tilt>
           <div class="team-card-inner">
-            <div class="team-avatar" aria-hidden="true"></div>
+            <img class="team-avatar" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&amp;fit=crop&amp;w=400&amp;h=400&amp;q=85" alt="" width="120" height="120" loading="lazy" />
             <h3 class="team-name">Vikram Khanna</h3>
             <p class="team-role">Master Colorist</p>
           </div>
         </div>
         <div class="team-card" data-tilt>
           <div class="team-card-inner">
-            <div class="team-avatar" aria-hidden="true"></div>
+            <img class="team-avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&amp;fit=crop&amp;w=400&amp;h=400&amp;q=85" alt="" width="120" height="120" loading="lazy" />
             <h3 class="team-name">Meera Iyer</h3>
             <p class="team-role">Bridal Lead</p>
           </div>
         </div>
         <div class="team-card" data-tilt>
           <div class="team-card-inner">
-            <div class="team-avatar" aria-hidden="true"></div>
+            <img class="team-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&amp;fit=crop&amp;w=400&amp;h=400&amp;q=85" alt="" width="120" height="120" loading="lazy" />
             <h3 class="team-name">Arjun Mehta</h3>
             <p class="team-role">Spa &amp; Wellness</p>
           </div>
@@ -1303,6 +1420,7 @@
 
     <!-- Booking -->
     <section class="booking-section reveal-section" id="booking">
+      <div class="lux-orb lux-orb--lg" style="top: -10%; right: 10%;" aria-hidden="true"></div>
       <div class="booking-inner">
         <h2 class="booking-title" data-split>Ready for a Royal Experience?</h2>
         <p class="booking-sub">Book Your Appointment Today</p>
@@ -1317,7 +1435,7 @@
       <div class="footer-grid">
         <div class="footer-col">
           <div class="logo-wrap" style="margin-bottom:0.75rem;">
-            <span class="logo-rs">RS</span>
+            <img class="brand-logo" src="assets/royal-style-logo.png" alt="" width="48" height="48" decoding="async" />
             <span class="logo-text">Royal Style</span>
           </div>
           <p>Where craftsmanship meets calm. Visit us for a luxury salon experience tailored to you.</p>
@@ -1360,11 +1478,29 @@
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const isMobile = () => window.innerWidth <= 768;
 
-      /* Loader */
+      function syncServicesMobileLayout() {
+        var pw = document.getElementById("servicesPinWrap");
+        if (pw) pw.classList.toggle("services-mobile-stack", window.innerWidth <= 768);
+      }
+      syncServicesMobileLayout();
+      window.addEventListener("resize", function () {
+        syncServicesMobileLayout();
+        if (typeof ScrollTrigger !== "undefined") ScrollTrigger.refresh();
+      });
+
+      /* Loader — min display + wait for assets */
       const loader = document.getElementById("pageLoader");
-      setTimeout(function () {
-        if (loader) loader.classList.add("hidden");
-      }, 1500);
+      const loaderStart = Date.now();
+      function hideLoader() {
+        if (!loader || loader.classList.contains("hidden")) return;
+        loader.classList.add("hidden");
+      }
+      window.addEventListener("load", function () {
+        var elapsed = Date.now() - loaderStart;
+        var wait = Math.max(0, 1600 - elapsed);
+        setTimeout(hideLoader, wait);
+      });
+      setTimeout(hideLoader, 4500);
 
       /* Cursor */
       const dot = document.getElementById("cursorDot");
@@ -1526,20 +1662,92 @@
       }
       if (!prefersReducedMotion) resetTimer();
 
+      /* Three.js — full-site ambient layer */
+      function initAmbientThree() {
+        if (typeof THREE === "undefined") return;
+        var canvas = document.getElementById("ambient-canvas");
+        if (!canvas) return;
+        var low = window.innerWidth <= 768;
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.5, 60);
+        camera.position.z = 14;
+        var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false, powerPreference: "low-power" });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, low ? 1 : 1.5));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        var n = low ? 90 : 220;
+        var positions = new Float32Array(n * 3);
+        var phases = new Float32Array(n);
+        for (var i = 0; i < n; i++) {
+          positions[i * 3] = (Math.random() - 0.5) * 24;
+          positions[i * 3 + 1] = (Math.random() - 0.5) * 18;
+          positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+          phases[i] = Math.random() * Math.PI * 2;
+        }
+        var geo = new THREE.BufferGeometry();
+        geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+        var mat = new THREE.PointsMaterial({
+          color: 0xc9a84c,
+          size: low ? 0.04 : 0.055,
+          transparent: true,
+          opacity: 0.35,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+        });
+        var pts = new THREE.Points(geo, mat);
+        scene.add(pts);
+
+        var knotGeo = new THREE.TorusKnotGeometry(2.2, 0.55, 70, 12);
+        var knotMat = new THREE.MeshBasicMaterial({
+          color: 0x1a4d3a,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.07
+        });
+        var knot = new THREE.Mesh(knotGeo, knotMat);
+        knot.position.set(6, -2, -10);
+        scene.add(knot);
+
+        var clock = new THREE.Clock();
+        function ambLoop() {
+          requestAnimationFrame(ambLoop);
+          var t = clock.getElapsedTime();
+          var arr = geo.attributes.position.array;
+          for (var i = 0; i < n; i++) {
+            arr[i * 3 + 1] += 0.003 + Math.sin(t + phases[i]) * 0.0008;
+            if (arr[i * 3 + 1] > 12) arr[i * 3 + 1] = -12;
+          }
+          geo.attributes.position.needsUpdate = true;
+          knot.rotation.x = t * 0.08;
+          knot.rotation.y = t * 0.12;
+          renderer.render(scene, camera);
+        }
+        ambLoop();
+
+        window.addEventListener("resize", function () {
+          var lo = window.innerWidth <= 768;
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, lo ? 1 : 1.5));
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+
       /* Three.js hero */
-      function initThree() {
-        if (typeof THREE === "undefined" || isMobile()) return;
+      function initHeroThree() {
+        if (typeof THREE === "undefined") return;
         const canvas = document.getElementById("hero-canvas");
         if (!canvas) return;
+        var low = window.innerWidth <= 768;
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 5;
 
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !low, alpha: true, powerPreference: low ? "low-power" : "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, low ? 1.25 : 2));
 
-        const particleCount = 420;
+        const particleCount = low ? 160 : 420;
         const positions = new Float32Array(particleCount * 3);
         const sizes = new Float32Array(particleCount);
         const phases = new Float32Array(particleCount);
@@ -1556,9 +1764,9 @@
         geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
         const mat = new THREE.PointsMaterial({
           color: 0xc9a84c,
-          size: 0.06,
+          size: low ? 0.08 : 0.06,
           transparent: true,
-          opacity: 0.85,
+          opacity: low ? 0.75 : 0.85,
           blending: THREE.AdditiveBlending,
           depthWrite: false,
           sizeAttenuation: true
@@ -1567,13 +1775,14 @@
         scene.add(points);
 
         const emerald = 0x1a4d3a;
-        for (let i = 0; i < 5; i++) {
+        var knotCount = low ? 2 : 5;
+        for (let i = 0; i < knotCount; i++) {
           const knot = new THREE.Mesh(
-            new THREE.TorusKnotGeometry(0.55 + i * 0.08, 0.12, 80, 12),
+            new THREE.TorusKnotGeometry(0.55 + i * 0.08, 0.12, low ? 48 : 80, 12),
             new THREE.MeshBasicMaterial({
               color: emerald,
               transparent: true,
-              opacity: 0.06 + i * 0.02,
+              opacity: (low ? 0.05 : 0.06) + i * 0.02,
               wireframe: true
             })
           );
@@ -1626,12 +1835,8 @@
         window.addEventListener("resize", onResize);
       }
 
-      if (!isMobile()) {
-        initThree();
-      } else {
-        const fb = document.getElementById("heroFallback");
-        if (fb) fb.classList.add("active");
-      }
+      initHeroThree();
+      initAmbientThree();
 
       /* GSAP */
       if (typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
@@ -1674,51 +1879,76 @@
             });
           });
 
-          const track = document.getElementById("servicesTrack");
-          const pinWrap = document.getElementById("servicesPinWrap");
-          if (track && pinWrap) {
-            const totalScroll = Math.max(0, track.scrollWidth - window.innerWidth);
-            gsap.to(track, {
-              x: () => -totalScroll,
-              ease: "none",
-              scrollTrigger: {
-                trigger: pinWrap,
-                start: "top top",
-                end: "+=400vh",
-                scrub: 1,
-                pin: ".services-pin-sticky",
-                anticipatePin: 1,
-                invalidateOnRefresh: true
-              }
-            });
+          function servicesScrollDistance() {
+            var track = document.getElementById("servicesTrack");
+            var sticky = document.querySelector(".services-pin-sticky");
+            if (!track || !sticky) return window.innerHeight;
+            var w = sticky.offsetWidth || window.innerWidth;
+            return Math.max(window.innerHeight * 0.85, track.scrollWidth - w + 96);
           }
+
+          ScrollTrigger.matchMedia({
+            "(min-width: 769px)": function () {
+              var track = document.getElementById("servicesTrack");
+              var pinWrap = document.getElementById("servicesPinWrap");
+              if (!track || !pinWrap) return;
+              var tween = gsap.to(track, {
+                x: function () {
+                  var sticky = document.querySelector(".services-pin-sticky");
+                  var w = sticky ? sticky.offsetWidth : window.innerWidth;
+                  return -(Math.max(0, track.scrollWidth - w));
+                },
+                ease: "none",
+                scrollTrigger: {
+                  trigger: pinWrap,
+                  start: "top top",
+                  end: function () {
+                    return "+=" + servicesScrollDistance();
+                  },
+                  scrub: 0.55,
+                  pin: ".services-pin-sticky",
+                  anticipatePin: 1,
+                  invalidateOnRefresh: true
+                }
+              });
+              return function () {
+                if (tween.scrollTrigger) tween.scrollTrigger.kill();
+                tween.kill();
+                gsap.set(track, { clearProps: "transform" });
+              };
+            },
+            "(max-width: 768px)": function () {
+              var track = document.getElementById("servicesTrack");
+              if (track) gsap.set(track, { clearProps: "transform,x" });
+            }
+          });
 
           gsap.from(".service-card-wrap", {
             opacity: 0,
-            y: 40,
-            stagger: 0.15,
-            duration: 0.9,
+            y: 50,
+            stagger: 0.12,
+            duration: 0.85,
             ease: "power3.out",
             scrollTrigger: {
               trigger: "#services",
-              start: "top 78%",
+              start: "top 85%",
               once: true
             }
           });
 
-          const cards = gsap.utils.toArray(".service-card-wrap");
-          cards.forEach(function (card) {
-            gsap.from(card, {
-              scrollTrigger: {
-                trigger: pinWrap,
-                start: "top top",
-                end: "+=400vh",
-                scrub: 1
-              },
-              rotateX: 15,
-              transformOrigin: "center bottom",
-              ease: "power2.out"
-            });
+          gsap.from(".gallery-item", {
+            y: 72,
+            opacity: 0,
+            rotateX: 16,
+            transformOrigin: "center bottom",
+            stagger: 0.07,
+            duration: 0.95,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".gallery-masonry",
+              start: "top 84%",
+              once: true
+            }
           });
 
           /* Hero title stagger */
@@ -1792,13 +2022,8 @@
         });
       }
 
-      /* Resize: toggle mobile three */
       window.addEventListener("resize", function () {
-        if (isMobile()) {
-          document.body.classList.add("cursor-native");
-          var fb = document.getElementById("heroFallback");
-          if (fb) fb.classList.add("active");
-        }
+        if (isMobile()) document.body.classList.add("cursor-native");
       });
     })();
   </script>
