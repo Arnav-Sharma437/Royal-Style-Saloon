@@ -593,7 +593,7 @@
       overflow: hidden;
     }
     .section-head {
-      padding: 2.75rem 4% 1.25rem;
+      padding: 2rem 4% 0.75rem;
       text-align: center;
     }
     .section-label {
@@ -622,25 +622,30 @@
       position: relative;
     }
     .services-pin-sticky {
-      height: 100vh;
+      min-height: min(92vh, 820px);
+      height: auto;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
+      padding-top: 0.25rem;
+      padding-bottom: 1.25rem;
       overflow: hidden;
+      box-sizing: border-box;
     }
     .services-track {
       display: flex;
-      gap: 2rem;
+      gap: 1.25rem;
       padding: 0 4%;
       will-change: transform;
+      align-items: stretch;
     }
     .service-card-wrap {
-      flex: 0 0 min(340px, 85vw);
+      flex: 0 0 min(300px, 82vw);
       perspective: 1200px;
     }
     .service-card {
       position: relative;
-      height: 420px;
+      height: 340px;
       transform-style: preserve-3d;
       transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -666,21 +671,39 @@
       box-shadow: 0 0 40px rgba(0, 200, 122, 0.35);
     }
     .service-card-media {
-      height: 140px;
+      height: 188px;
       width: 100%;
-      background-size: cover;
-      background-position: center;
+      flex-shrink: 0;
       position: relative;
+      overflow: hidden;
       transform: translateZ(0);
       transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      background: linear-gradient(145deg, #1a3d2e, #0a0a0a);
+    }
+    .service-card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
     }
     .service-card-media::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, transparent 20%, rgba(5, 5, 5, 0.92));
+      background: linear-gradient(to bottom, transparent 35%, rgba(5, 5, 5, 0.88));
+      pointer-events: none;
     }
-    .service-card:hover .service-card-media { transform: scale(1.06); }
+    .service-card:hover .service-card-media { transform: scale(1.04); }
+    .service-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0.65rem 1rem 1rem;
+      min-height: 0;
+    }
     .service-card:hover .service-card-face {
       backdrop-filter: blur(28px);
       -webkit-backdrop-filter: blur(28px);
@@ -716,24 +739,30 @@
     }
     .service-card:hover .shimmer-sweep::after { left: 120%; }
     .service-icon {
-      width: 52px;
-      height: 52px;
-      margin: 0.85rem auto 0.5rem;
+      width: 44px;
+      height: 44px;
+      margin: 0 0 0.4rem;
       color: var(--accent-emerald);
       position: relative;
       z-index: 1;
+      flex-shrink: 0;
     }
     .service-name {
       font-family: var(--font-serif);
-      font-size: 1.5rem;
+      font-size: 1.28rem;
       color: var(--text-off);
-      margin-bottom: 0.75rem;
+      margin: 0 0 0.45rem;
+      text-align: center;
+      line-height: 1.2;
     }
     .service-desc {
-      font-size: 0.9rem;
+      font-size: 0.84rem;
       color: var(--text-cream);
-      line-height: 1.6;
-      padding: 0 1.5rem 2rem;
+      line-height: 1.55;
+      padding: 0;
+      margin: 0;
+      text-align: center;
+      flex: 1;
     }
     .service-price {
       font-family: var(--font-serif);
@@ -803,45 +832,32 @@
       overflow: hidden;
     }
     .gallery-masonry {
-      column-count: 3;
-      column-gap: 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
       max-width: 1200px;
-      margin: 2rem auto 0;
-      transform-style: preserve-3d;
-      perspective: 1400px;
+      margin: 1.5rem auto 0;
     }
     .gallery-item {
-      break-inside: avoid;
-      margin-bottom: 1.25rem;
       position: relative;
       border-radius: 12px;
       overflow: hidden;
       cursor: pointer;
-      transform-origin: center;
-      transform-style: preserve-3d;
-      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .gallery-item:hover { transform: scale(1.08); z-index: 2; }
+    .gallery-item:hover { transform: scale(1.03); z-index: 2; }
     .gallery-placeholder {
-      min-height: 180px;
+      aspect-ratio: 4/3;
+      min-height: 0;
       background: linear-gradient(145deg, #0d1f17 0%, #2d6a4f 45%, #050505 100%);
       position: relative;
     }
     .gallery-placeholder img {
       width: 100%;
       height: 100%;
-      min-height: inherit;
       object-fit: cover;
       display: block;
     }
-    .gallery-item:nth-child(2) .gallery-placeholder { min-height: 240px; }
-    .gallery-item:nth-child(3) .gallery-placeholder { min-height: 200px; }
-    .gallery-item:nth-child(4) .gallery-placeholder { min-height: 220px; }
-    .gallery-item:nth-child(5) .gallery-placeholder { min-height: 160px; }
-    .gallery-item:nth-child(6) .gallery-placeholder { min-height: 260px; }
-    .gallery-item:nth-child(7) .gallery-placeholder { min-height: 190px; }
-    .gallery-item:nth-child(8) .gallery-placeholder { min-height: 210px; }
-    .gallery-item:nth-child(9) .gallery-placeholder { min-height: 170px; }
     .gallery-spotlight {
       position: absolute;
       width: 200px;
@@ -870,18 +886,30 @@
       backdrop-filter: blur(4px);
     }
     .gallery-cat {
-      font-size: 0.85rem;
-      letter-spacing: 0.2em;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--text-off);
+      text-shadow: 0 1px 8px rgba(0,0,0,0.6);
       opacity: 0;
-      transform: translateY(8px);
+      transform: translateY(6px);
       transition: opacity 0.35s, transform 0.35s;
     }
     .gallery-item:hover .gallery-cat { opacity: 1; transform: translateY(0); }
+    .services-slider-hint {
+      display: none;
+      text-align: center;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-emerald);
+      margin: 0.5rem 0 0;
+      opacity: 0.85;
+    }
     .gallery-cta-wrap {
       text-align: center;
-      margin-top: 3rem;
+      margin-top: 2rem;
     }
 
     /* --- Team --- */
@@ -1094,15 +1122,18 @@
       gap: 1.25rem;
     }
     .social-links a {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
       border: 1px solid rgba(201, 168, 76, 0.35);
       border-radius: 50%;
-      font-size: 0.75rem;
-      transition: border-color 0.3s, color 0.3s;
+      color: var(--accent-gold);
+      transition: border-color 0.3s, color 0.3s, transform 0.25s;
+    }
+    .social-links a svg {
+      flex-shrink: 0;
     }
     .social-links a:hover {
       border-color: var(--accent-emerald);
@@ -1156,42 +1187,91 @@
       .nav-links { display: none; }
       .nav-actions .nav-cta { display: none; }
       .hamburger { display: flex; }
-      .gallery-masonry { column-count: 2; }
-      .team-grid { grid-template-columns: repeat(2, 1fr); }
       .footer-grid { grid-template-columns: repeat(2, 1fr); }
       .hero-badge { display: none; }
       body { cursor: auto; }
       .cursor-dot, .cursor-ring { display: none; }
+      .services-slider-hint { display: block; }
       .services-mobile-stack .services-track {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: nowrap;
         transform: none !important;
-        padding: 2rem 6%;
-        gap: 1.5rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: 5%;
+        padding: 0.5rem 5% 1.25rem;
+        gap: 0.85rem;
       }
       .services-mobile-stack .service-card-wrap {
-        flex: 1 1 auto !important;
-        width: 100%;
-        max-width: 420px;
-        margin-left: auto;
-        margin-right: auto;
+        flex: 0 0 min(88vw, 380px) !important;
+        width: min(88vw, 380px);
+        max-width: none;
+        margin: 0;
+        scroll-snap-align: center;
       }
       .services-mobile-stack .services-pin-sticky {
         height: auto !important;
         min-height: 0 !important;
+        max-height: none !important;
         overflow: visible !important;
-        padding: 2rem 0 4rem;
+        padding: 0.5rem 0 1rem !important;
+      }
+      .services-mobile-stack .services-pin-wrap {
+        min-height: 0 !important;
+      }
+      .gallery-masonry {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        gap: 0.75rem;
+        padding: 0 4% 0.75rem;
+        grid-template-columns: unset;
+      }
+      .gallery-masonry .gallery-item {
+        flex: 0 0 86vw;
+        max-width: 360px;
+        scroll-snap-align: center;
+      }
+      .gallery-scroll-hint {
+        display: block;
+        text-align: center;
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        color: var(--accent-emerald);
+        margin: 0.35rem 0 0;
+      }
+      .team-grid {
+        display: flex !important;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        grid-template-columns: unset;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        gap: 1rem;
+        padding: 0 4% 0.5rem;
+      }
+      .team-grid .team-card {
+        flex: 0 0 min(82vw, 300px);
+        scroll-snap-align: center;
+        min-width: 0;
       }
       #ambient-canvas { opacity: 0.22; }
     }
+    .gallery-scroll-hint { display: none; }
     @media (max-width: 480px) {
-      .gallery-masonry { column-count: 1; }
-      .team-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
       .hero-ctas { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
 <body>
+  <noscript><style>.reveal-section,.hero-title .char,.hero-sub{opacity:1!important;transform:none!important}</style></noscript>
   <!-- Page loader -->
   <div class="page-loader" id="pageLoader" aria-hidden="true">
     <div class="loader-visual">
@@ -1294,6 +1374,7 @@
       <div class="section-head reveal-section">
         <p class="section-label">What We Offer</p>
         <h2 class="section-title" data-split>Signature Services</h2>
+        <p class="services-slider-hint" aria-hidden="true">Swipe sideways for more</p>
       </div>
       <div class="lux-orb lux-orb--lg" style="top: 12%; right: -8%;" aria-hidden="true"></div>
       <div class="services-pin-wrap" id="servicesPinWrap">
@@ -1304,13 +1385,17 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
-                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Hair styling"></div>
-                  <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M32 8L44 20v16c0 8-6 16-12 20-6-4-12-12-12-20V20L32 8z" stroke="currentColor" stroke-width="2"/>
-                    <path d="M26 28h12M26 34h12" stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                  <h3 class="service-name">Hair Styling</h3>
-                  <p class="service-desc">Precision cuts, editorial styling, and finishes that turn heads.</p>
+                  <div class="service-card-media">
+                    <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="Hair styling" width="800" height="500" loading="lazy" decoding="async" />
+                  </div>
+                  <div class="service-body">
+                    <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M32 8L44 20v16c0 8-6 16-12 20-6-4-12-12-12-20V20L32 8z" stroke="currentColor" stroke-width="2"/>
+                      <path d="M26 28h12M26 34h12" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <h3 class="service-name">Hair Styling</h3>
+                    <p class="service-desc">Precision cuts, editorial styling, and finishes that turn heads.</p>
+                  </div>
                 </div>
                 <div class="service-card-face service-card-face--back">
                   <p class="service-price">From ₹1,499</p>
@@ -1322,13 +1407,17 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
-                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Bridal makeup"></div>
-                  <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <circle cx="32" cy="26" r="12" stroke="currentColor" stroke-width="2"/>
-                    <path d="M20 44c4-6 20-6 24 0" stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                  <h3 class="service-name">Bridal Makeup</h3>
-                  <p class="service-desc">Timeless bridal looks with premium products and on-site touch-ups.</p>
+                  <div class="service-card-media">
+                    <img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="Bridal makeup" width="800" height="500" loading="lazy" decoding="async" />
+                  </div>
+                  <div class="service-body">
+                    <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <circle cx="32" cy="26" r="12" stroke="currentColor" stroke-width="2"/>
+                      <path d="M20 44c4-6 20-6 24 0" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <h3 class="service-name">Bridal Makeup</h3>
+                    <p class="service-desc">Timeless bridal looks with premium products and on-site touch-ups.</p>
+                  </div>
                 </div>
                 <div class="service-card-face service-card-face--back">
                   <p class="service-price">From ₹12,999</p>
@@ -1340,13 +1429,17 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
-                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Skin care facial"></div>
-                  <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <ellipse cx="32" cy="30" rx="18" ry="14" stroke="currentColor" stroke-width="2"/>
-                    <path d="M20 38c2 8 22 8 24 0" stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                  <h3 class="service-name">Skin Care</h3>
-                  <p class="service-desc">Facials and peels tailored to glow, clarity, and lasting radiance.</p>
+                  <div class="service-card-media">
+                    <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="Skin care facial" width="800" height="500" loading="lazy" decoding="async" />
+                  </div>
+                  <div class="service-body">
+                    <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <ellipse cx="32" cy="30" rx="18" ry="14" stroke="currentColor" stroke-width="2"/>
+                      <path d="M20 38c2 8 22 8 24 0" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <h3 class="service-name">Skin Care</h3>
+                    <p class="service-desc">Facials and peels tailored to glow, clarity, and lasting radiance.</p>
+                  </div>
                 </div>
                 <div class="service-card-face service-card-face--back">
                   <p class="service-price">From ₹2,299</p>
@@ -1358,13 +1451,17 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
-                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Nail art"></div>
-                  <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M20 44c0-12 8-20 12-28 4 8 12 16 12 28" stroke="currentColor" stroke-width="2"/>
-                    <circle cx="32" cy="20" r="4" stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                  <h3 class="service-name">Nail Art</h3>
-                  <p class="service-desc">Gel, extensions, and bespoke nail artistry in a hygienic studio.</p>
+                  <div class="service-card-media">
+                    <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="Nail art" width="800" height="500" loading="lazy" decoding="async" />
+                  </div>
+                  <div class="service-body">
+                    <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M20 44c0-12 8-20 12-28 4 8 12 16 12 28" stroke="currentColor" stroke-width="2"/>
+                      <circle cx="32" cy="20" r="4" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <h3 class="service-name">Nail Art</h3>
+                    <p class="service-desc">Gel, extensions, and bespoke nail artistry in a hygienic studio.</p>
+                  </div>
                 </div>
                 <div class="service-card-face service-card-face--back">
                   <p class="service-price">From ₹899</p>
@@ -1376,13 +1473,17 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
-                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Spa and massage"></div>
-                  <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M18 40h28M24 32l8-16 8 16" stroke="currentColor" stroke-width="2"/>
-                    <circle cx="32" cy="46" r="6" stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                  <h3 class="service-name">Spa &amp; Massage</h3>
-                  <p class="service-desc">Deep relaxation with aromatherapy and therapeutic massage rituals.</p>
+                  <div class="service-card-media">
+                    <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="Spa and massage" width="800" height="500" loading="lazy" decoding="async" />
+                  </div>
+                  <div class="service-body">
+                    <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M18 40h28M24 32l8-16 8 16" stroke="currentColor" stroke-width="2"/>
+                      <circle cx="32" cy="46" r="6" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <h3 class="service-name">Spa &amp; Massage</h3>
+                    <p class="service-desc">Deep relaxation with aromatherapy and therapeutic massage rituals.</p>
+                  </div>
                 </div>
                 <div class="service-card-face service-card-face--back">
                   <p class="service-price">From ₹3,499</p>
@@ -1394,13 +1495,17 @@
               <div class="service-card">
                 <div class="shimmer-sweep"></div>
                 <div class="service-card-face service-card-face--front">
-                  <div class="service-card-media" style="background-image:url('https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&amp;fit=crop&amp;w=800&amp;q=80');" role="img" aria-label="Hair color"></div>
-                  <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M22 40c4-16 16-24 20-24s16 8 20 24" stroke="currentColor" stroke-width="2"/>
-                    <path d="M16 44h32" stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                  <h3 class="service-name">Hair Color</h3>
-                  <p class="service-desc">Balayage, global color, and corrective work by certified colorists.</p>
+                  <div class="service-card-media">
+                    <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="Hair color" width="800" height="500" loading="lazy" decoding="async" />
+                  </div>
+                  <div class="service-body">
+                    <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M22 40c4-16 16-24 20-24s16 8 20 24" stroke="currentColor" stroke-width="2"/>
+                      <path d="M16 44h32" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <h3 class="service-name">Hair Color</h3>
+                    <p class="service-desc">Balayage, global color, and corrective work by certified colorists.</p>
+                  </div>
                 </div>
                 <div class="service-card-face service-card-face--back">
                   <p class="service-price">From ₹3,999</p>
@@ -1444,17 +1549,18 @@
       <div class="section-head">
         <p class="section-label">Portfolio</p>
         <h2 class="section-title" data-split>Gallery</h2>
+        <p class="gallery-scroll-hint" aria-hidden="true">Swipe for more</p>
       </div>
       <div class="gallery-masonry">
-        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Salon interior" loading="lazy" width="600" height="400" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Salon</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1633681926022-84c22e8cb2d6?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Bridal hair" loading="lazy" width="600" height="500" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Bridal</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1492103236225-3a3df08f27db?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Hair color" loading="lazy" width="600" height="420" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Color</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b1?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Facial treatment" loading="lazy" width="600" height="450" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Skin</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Nail art" loading="lazy" width="600" height="380" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Nails</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Spa" loading="lazy" width="600" height="520" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Spa</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Hair styling" loading="lazy" width="600" height="400" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Styling</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Makeup" loading="lazy" width="600" height="480" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Makeup</span></div></div></div>
-        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Editorial beauty" loading="lazy" width="600" height="420" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Editorial</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;h=675&amp;q=88" alt="Salon interior" loading="lazy" decoding="async" width="900" height="675" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Salon</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;h=675&amp;q=88" alt="Bridal" loading="lazy" decoding="async" width="900" height="675" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Bridal</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;h=675&amp;q=88" alt="Hair color" loading="lazy" decoding="async" width="900" height="675" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Color</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;h=675&amp;q=88" alt="Skin care" loading="lazy" decoding="async" width="900" height="675" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Skin</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;h=675&amp;q=88" alt="Nail art" loading="lazy" decoding="async" width="900" height="675" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Nails</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;h=675&amp;q=88" alt="Spa" loading="lazy" decoding="async" width="900" height="675" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Spa</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;h=675&amp;q=88" alt="Hair styling" loading="lazy" decoding="async" width="900" height="675" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Styling</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;h=675&amp;q=88" alt="Makeup" loading="lazy" decoding="async" width="900" height="675" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Makeup</span></div></div></div>
+        <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;h=675&amp;q=88" alt="Salon styling" loading="lazy" decoding="async" width="900" height="675" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Luxury</span></div></div></div>
       </div>
       <div class="gallery-cta-wrap">
         <a href="#booking" class="btn btn-outline btn-ripple magnetic-target">View Full Gallery</a>
@@ -1581,9 +1687,15 @@
       <div class="footer-bottom">
         <p>© 2026 Royal Style Salon. All rights reserved.</p>
         <div class="social-links">
-          <a href="#" aria-label="Instagram">IG</a>
-          <a href="#" aria-label="Facebook">FB</a>
-          <a href="#" aria-label="WhatsApp">WA</a>
+          <a href="#" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="#" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="#" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
         </div>
       </div>
     </footer>
@@ -2083,16 +2195,14 @@
           });
 
           gsap.from(".gallery-item", {
-            y: 72,
+            y: 36,
             opacity: 0,
-            rotateX: 16,
-            transformOrigin: "center bottom",
-            stagger: 0.07,
-            duration: 0.95,
+            stagger: 0.06,
+            duration: 0.65,
             ease: "power3.out",
             scrollTrigger: {
               trigger: ".gallery-masonry",
-              start: "top 84%",
+              start: "top 88%",
               once: true
             }
           });
