@@ -122,6 +122,11 @@
       position: relative;
       z-index: 2;
       box-shadow: 0 0 40px rgba(0, 200, 122, 0.12), 0 0 80px rgba(201, 168, 76, 0.08);
+      animation: logo-loader-pulse 2.8s ease-in-out infinite;
+    }
+    @keyframes logo-loader-pulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 12px rgba(201, 168, 76, 0.25)); }
+      50% { transform: scale(1.04); filter: drop-shadow(0 0 22px rgba(0, 200, 122, 0.35)); }
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes shimmer-text {
@@ -244,6 +249,34 @@
       flex-shrink: 0;
       box-shadow: 0 0 24px rgba(201, 168, 76, 0.2);
       border: 1px solid rgba(201, 168, 76, 0.35);
+      animation: logo-nav-glow 5s ease-in-out infinite;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s, box-shadow 0.35s;
+    }
+    @keyframes logo-nav-glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.22), 0 0 0 0 rgba(201, 168, 76, 0);
+      }
+      40% {
+        box-shadow: 0 0 28px rgba(201, 168, 76, 0.42), 0 0 0 3px rgba(201, 168, 76, 0.07);
+      }
+      55% {
+        box-shadow: 0 0 22px rgba(0, 200, 122, 0.25), 0 0 0 2px rgba(0, 200, 122, 0.06);
+      }
+    }
+    .logo-wrap:hover .brand-logo {
+      animation: none;
+      transform: scale(1.06) rotate(-3deg);
+      border-color: rgba(201, 168, 76, 0.65);
+      box-shadow: 0 0 36px rgba(201, 168, 76, 0.45), 0 0 0 2px rgba(201, 168, 76, 0.15);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .loader-logo-img,
+      .brand-logo {
+        animation: none !important;
+      }
+      .logo-wrap:hover .brand-logo {
+        transform: none;
+      }
     }
     .logo-text {
       font-family: var(--font-serif);
@@ -444,6 +477,10 @@
     .hero-title .char {
       display: inline-block;
       opacity: 1;
+    }
+    .hero-title-nowrap {
+      white-space: nowrap;
+      display: inline-block;
     }
     .hero-sub {
       font-size: 1.1rem;
@@ -877,37 +914,69 @@
 
     /* --- Gallery --- */
     .gallery-section {
-      padding: 3rem 4% 2.5rem;
-      background: var(--bg-rich);
+      padding: 3rem 4% 1.25rem;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% 0%, rgba(26, 77, 58, 0.35) 0%, transparent 55%),
+        var(--bg-rich);
       position: relative;
       overflow: hidden;
     }
     .gallery-masonry {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.85rem;
-      max-width: 1200px;
+      gap: 1rem 1.1rem;
+      max-width: 1180px;
       margin: 1.5rem auto 0;
+      padding-bottom: 2rem;
+      isolation: isolate;
     }
     .gallery-item {
       position: relative;
-      border-radius: 12px;
+      border-radius: 14px;
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      border: 1px solid rgba(201, 168, 76, 0.18);
+      box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s, border-color 0.35s;
     }
-    .gallery-item:hover { transform: scale(1.03); z-index: 2; }
+    .gallery-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 1;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.07) 0%, transparent 42%, rgba(0, 0, 0, 0.35) 100%);
+    }
+    /* Softer lift so tiles don’t cover the CTA — reserve space via masonry padding */
+    .gallery-item:hover {
+      transform: scale(1.02) translateY(-4px);
+      z-index: 4;
+      border-color: rgba(201, 168, 76, 0.45);
+      box-shadow:
+        0 20px 48px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(201, 168, 76, 0.2),
+        0 0 40px rgba(0, 200, 122, 0.12);
+    }
     .gallery-placeholder {
       aspect-ratio: 4/3;
       min-height: 0;
-      background: linear-gradient(145deg, #0d1f17 0%, #2d6a4f 45%, #050505 100%);
+      background: linear-gradient(145deg, #0a1812 0%, #1a4d3a 42%, #050505 100%);
       position: relative;
+      z-index: 2;
     }
     .gallery-placeholder img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .gallery-item:hover .gallery-placeholder img {
+      transform: scale(1.05);
     }
     .gallery-spotlight {
       position: absolute;
@@ -927,25 +996,27 @@
       inset: 0;
       display: flex;
       align-items: flex-end;
-      padding: 1.25rem;
-      background: rgba(5, 5, 5, 0);
+      padding: 1.35rem 1.25rem;
+      background: linear-gradient(to top, rgba(5, 5, 5, 0.75) 0%, rgba(5, 5, 5, 0.15) 45%, transparent 100%);
       backdrop-filter: blur(0);
-      transition: background 0.4s, backdrop-filter 0.4s;
+      transition: background 0.45s, backdrop-filter 0.45s;
+      z-index: 3;
     }
     .gallery-item:hover .gallery-overlay {
-      background: rgba(5, 5, 5, 0.45);
-      backdrop-filter: blur(4px);
+      background: linear-gradient(to top, rgba(5, 5, 5, 0.88) 0%, rgba(5, 5, 5, 0.35) 50%, rgba(5, 5, 5, 0.08) 100%);
+      backdrop-filter: blur(6px);
     }
     .gallery-cat {
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.18em;
+      font-family: var(--font-serif);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: var(--text-off);
-      text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+      color: var(--accent-gold);
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.85);
       opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 0.35s, transform 0.35s;
+      transform: translateY(8px);
+      transition: opacity 0.4s, transform 0.4s, letter-spacing 0.4s;
     }
     .gallery-item:hover .gallery-cat { opacity: 1; transform: translateY(0); }
     .services-slider-hint {
@@ -969,12 +1040,26 @@
     }
     .gallery-cta-wrap {
       text-align: center;
-      margin-top: 2rem;
+      margin-top: 0.5rem;
+      padding-top: 1.25rem;
+      position: relative;
+      z-index: 10;
+    }
+    .gallery-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      padding: 0.95rem 2.25rem !important;
+      letter-spacing: 0.22em !important;
+      font-size: 0.72rem !important;
+      border-width: 1.5px !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     /* --- Team --- */
     .team-section {
-      padding: 3rem 4% 3.5rem;
+      padding: 2rem 4% 3.5rem;
       background: var(--gradient-page);
     }
     .team-grid {
@@ -1294,8 +1379,11 @@
         -webkit-overflow-scrolling: touch;
         scroll-snap-type: x mandatory;
         gap: 0.75rem;
-        padding: 0 4% 0.75rem;
+        padding: 0 4% 1.5rem;
         grid-template-columns: unset;
+      }
+      .gallery-item:hover {
+        transform: scale(1.01) translateY(-2px);
       }
       .gallery-masonry .gallery-item {
         flex: 0 0 86vw;
@@ -1625,7 +1713,7 @@
         <div class="gallery-item"><div class="gallery-placeholder"><img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;h=675&amp;q=88" alt="Salon styling" loading="lazy" decoding="async" width="900" height="675" /><div class="gallery-spotlight"></div><div class="gallery-overlay"><span class="gallery-cat">Luxury</span></div></div></div>
       </div>
       <div class="gallery-cta-wrap">
-        <a href="#booking" class="btn btn-outline btn-ripple magnetic-target">View Full Gallery</a>
+        <a href="#booking" class="btn btn-outline btn-ripple magnetic-target gallery-cta">View Full Gallery</a>
       </div>
     </section>
 
@@ -2204,6 +2292,27 @@
         function splitHeading(el) {
           const text = el.textContent.trim();
           el.textContent = "";
+          if (el.hasAttribute("data-split-hero")) {
+            var m = text.match(/^(.*\s)(Royalty)$/i);
+            if (m) {
+              m[1].split("").forEach(function (ch) {
+                var span = document.createElement("span");
+                span.className = "char";
+                span.textContent = ch === " " ? "\u00a0" : ch;
+                el.appendChild(span);
+              });
+              var nowrap = document.createElement("span");
+              nowrap.className = "hero-title-nowrap";
+              m[2].split("").forEach(function (ch) {
+                var span = document.createElement("span");
+                span.className = "char";
+                span.textContent = ch;
+                nowrap.appendChild(span);
+              });
+              el.appendChild(nowrap);
+              return;
+            }
+          }
           text.split("").forEach(function (ch) {
             const span = document.createElement("span");
             span.className = "char";
