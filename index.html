@@ -327,6 +327,13 @@
       gap: 1.5rem;
     }
     .mobile-drawer.open { transform: translateX(0); }
+    [data-theme="light"] .mobile-drawer {
+      background: rgba(247, 244, 238, 0.98);
+      border-left: 1px solid rgba(154, 123, 46, 0.2);
+    }
+    [data-theme="light"] .mobile-drawer .nav-link {
+      color: var(--text-off);
+    }
     .drawer-backdrop {
       position: fixed;
       inset: 0;
@@ -591,10 +598,23 @@
       background: var(--gradient-page);
       position: relative;
       overflow: hidden;
+      padding-bottom: 0.35rem;
+    }
+    .services-section .section-head {
+      padding: 1.75rem 4% 0.5rem;
     }
     .section-head {
       padding: 2rem 4% 0.75rem;
       text-align: center;
+    }
+    .services-desktop-hint {
+      display: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-emerald);
+      margin: 0.6rem 0 0;
+      opacity: 0.85;
     }
     .section-label {
       font-size: 0.7rem;
@@ -621,14 +641,22 @@
     .services-pin-wrap {
       position: relative;
     }
+    /* Clips the row so ~3–4 cards show; track slides horizontally while you scroll */
+    .services-viewport {
+      overflow: hidden;
+      width: 100%;
+      margin-inline: auto;
+      box-sizing: border-box;
+    }
     .services-pin-sticky {
-      min-height: min(92vh, 820px);
+      /* Fit content only — a tall min-height left a huge empty band under the cards */
+      min-height: 0;
       height: auto;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      padding-top: 0.25rem;
-      padding-bottom: 1.25rem;
+      padding-top: 0.15rem;
+      padding-bottom: 0.35rem;
       overflow: hidden;
       box-sizing: border-box;
     }
@@ -643,6 +671,23 @@
       flex: 0 0 min(300px, 82vw);
       perspective: 1200px;
     }
+    @media (min-width: 769px) {
+      .services-desktop-hint {
+        display: block;
+      }
+      .services-pin-wrap:not(.services-mobile-stack) .services-viewport {
+        width: min(980px, calc(100vw - 72px));
+        max-width: 100%;
+      }
+      .services-pin-wrap:not(.services-mobile-stack) .services-track {
+        padding: 0;
+      }
+      .services-pin-wrap:not(.services-mobile-stack) .service-card-wrap {
+        flex: 0 0 268px;
+        width: 268px;
+        max-width: 268px;
+      }
+    }
     .service-card {
       position: relative;
       height: 340px;
@@ -650,6 +695,12 @@
       transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .service-card:hover { transform: rotateY(180deg) scale(1.04); }
+    @media (hover: none) {
+      .service-card:hover { transform: none; }
+      .service-card.is-flipped {
+        transform: rotateY(180deg) scale(1.02);
+      }
+    }
     .service-card-face {
       position: absolute;
       inset: 0;
@@ -905,6 +956,15 @@
       text-transform: uppercase;
       color: var(--accent-emerald);
       margin: 0.5rem 0 0;
+      opacity: 0.85;
+    }
+    .gallery-scroll-hint {
+      display: none;
+      text-align: center;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      color: var(--accent-emerald);
+      margin: 0.35rem 0 0;
       opacity: 0.85;
     }
     .gallery-cta-wrap {
@@ -1221,6 +1281,11 @@
       .services-mobile-stack .services-pin-wrap {
         min-height: 0 !important;
       }
+      .services-mobile-stack .services-viewport {
+        width: 100%;
+        max-width: none;
+        overflow: visible;
+      }
       .gallery-masonry {
         display: flex;
         flex-direction: row;
@@ -1239,11 +1304,6 @@
       }
       .gallery-scroll-hint {
         display: block;
-        text-align: center;
-        font-size: 0.72rem;
-        letter-spacing: 0.18em;
-        color: var(--accent-emerald);
-        margin: 0.35rem 0 0;
       }
       .team-grid {
         display: flex !important;
@@ -1263,7 +1323,6 @@
       }
       #ambient-canvas { opacity: 0.22; }
     }
-    .gallery-scroll-hint { display: none; }
     @media (max-width: 480px) {
       .footer-grid { grid-template-columns: 1fr; }
       .hero-ctas { flex-direction: column; align-items: stretch; }
@@ -1375,11 +1434,13 @@
         <p class="section-label">What We Offer</p>
         <h2 class="section-title" data-split>Signature Services</h2>
         <p class="services-slider-hint" aria-hidden="true">Swipe sideways for more</p>
+        <p class="services-desktop-hint" aria-hidden="true">Scroll down — services slide sideways</p>
       </div>
       <div class="lux-orb lux-orb--lg" style="top: 12%; right: -8%;" aria-hidden="true"></div>
       <div class="services-pin-wrap" id="servicesPinWrap">
         <div class="services-pin-sticky">
-          <div class="services-track" id="servicesTrack">
+          <div class="services-viewport" id="servicesViewport">
+            <div class="services-track" id="servicesTrack">
             <!-- 6 cards -->
             <div class="service-card-wrap">
               <div class="service-card">
@@ -1513,6 +1574,7 @@
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -1706,6 +1768,17 @@
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const isMobile = () => window.innerWidth <= 768;
 
+      /* Stats must never stay at 0 if GSAP is off or reduced-motion */
+      function finalizeStatNumbers() {
+        document.querySelectorAll(".stat-num").forEach(function (el) {
+          var t = parseInt(el.getAttribute("data-target"), 10);
+          if (isNaN(t)) return;
+          var suffix = el.getAttribute("data-suffix") || "+";
+          var numStr = t >= 1000 ? t.toLocaleString("en-IN") : String(t);
+          el.textContent = numStr + suffix;
+        });
+      }
+
       function syncServicesMobileLayout() {
         var pw = document.getElementById("servicesPinWrap");
         if (pw) pw.classList.toggle("services-mobile-stack", window.innerWidth <= 768);
@@ -1735,6 +1808,11 @@
       syncThemeIcons();
       document.querySelectorAll(".js-theme-toggle").forEach(function (btn) {
         btn.addEventListener("click", function () { toggleTheme(); });
+      });
+
+      /* External images: avoid hotlink / referrer blocks on some hosts */
+      document.querySelectorAll('img[src*="unsplash"]').forEach(function (img) {
+        img.referrerPolicy = "no-referrer";
       });
 
       /* Hero video — fade in when playable */
@@ -1875,6 +1953,16 @@
           spot.style.top = e.clientY - r.top + "px";
         });
       });
+
+      /* Service cards: tap to flip on touch devices */
+      if (window.matchMedia("(hover: none)").matches) {
+        document.querySelectorAll(".service-card").forEach(function (card) {
+          card.addEventListener("click", function (e) {
+            if (e.target.closest(".btn-book-sm")) return;
+            card.classList.toggle("is-flipped");
+          });
+        });
+      }
 
       /* Team tilt */
       document.querySelectorAll("[data-tilt]").forEach(function (card) {
@@ -2092,8 +2180,22 @@
         window.addEventListener("resize", onResize);
       }
 
-      initHeroThree();
-      initAmbientThree();
+      try {
+        initHeroThree();
+      } catch (err) {
+        console.warn("Hero 3D unavailable:", err);
+        var hc = document.getElementById("hero-canvas");
+        if (hc) hc.style.display = "none";
+        var hf = document.getElementById("heroFallback");
+        if (hf) hf.classList.add("active");
+      }
+      try {
+        initAmbientThree();
+      } catch (err) {
+        console.warn("Ambient 3D unavailable:", err);
+        var ac = document.getElementById("ambient-canvas");
+        if (ac) ac.style.display = "none";
+      }
 
       /* GSAP */
       if (typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
@@ -2138,22 +2240,24 @@
 
           function servicesScrollDistance() {
             var track = document.getElementById("servicesTrack");
-            var sticky = document.querySelector(".services-pin-sticky");
-            if (!track || !sticky) return Math.min(window.innerHeight * 2.2, 1800);
-            var w = sticky.offsetWidth || window.innerWidth;
-            var raw = Math.max(window.innerHeight * 0.55, track.scrollWidth - w + 48);
-            return Math.min(raw, window.innerHeight * 2.5);
+            var view = document.getElementById("servicesViewport");
+            if (!track) return 400;
+            var w = view ? view.offsetWidth : window.innerWidth;
+            /* Match horizontal overflow only — viewport shows ~3–4 cards, rest on scroll */
+            var overflowPx = Math.max(0, track.scrollWidth - w + 16);
+            return Math.min(Math.max(overflowPx, 1), window.innerHeight * 2.1);
           }
 
           ScrollTrigger.matchMedia({
             "(min-width: 769px)": function () {
               var track = document.getElementById("servicesTrack");
               var pinWrap = document.getElementById("servicesPinWrap");
-              if (!track || !pinWrap) return;
+              var view = document.getElementById("servicesViewport");
+              if (!track || !pinWrap || !view) return;
               var tween = gsap.to(track, {
                 x: function () {
-                  var sticky = document.querySelector(".services-pin-sticky");
-                  var w = sticky ? sticky.offsetWidth : window.innerWidth;
+                  var v = document.getElementById("servicesViewport");
+                  var w = v ? v.offsetWidth : window.innerWidth;
                   return -(Math.max(0, track.scrollWidth - w));
                 },
                 ease: "none",
@@ -2272,11 +2376,23 @@
           var hs = document.getElementById("heroSub");
           if (hs) hs.style.opacity = 1;
           document.querySelectorAll("#heroTitle .char").forEach(function (c) { c.style.opacity = 1; });
+          finalizeStatNumbers();
         }
         window.addEventListener("load", function () {
           if (typeof ScrollTrigger !== "undefined") ScrollTrigger.refresh();
         });
+      } else {
+        finalizeStatNumbers();
       }
+
+      /* Safety: if counters never animated, fill after load */
+      window.addEventListener("load", function () {
+        setTimeout(function () {
+          var n = document.querySelector(".stat-num");
+          var digits = n ? String(n.textContent).replace(/\D/g, "") : "1";
+          if (!digits || digits === "0") finalizeStatNumbers();
+        }, 2800);
+      });
 
       window.addEventListener("resize", function () {
         if (isMobile()) document.body.classList.add("cursor-native");
