@@ -7,11 +7,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      var t = localStorage.getItem("royal-theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      } else {
+        document.documentElement.setAttribute("data-theme", window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      }
+    })();
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-    :root {
+    :root,
+    [data-theme="dark"] {
+      color-scheme: dark;
       --bg-deep: #0a0a0a;
       --bg-rich: #050505;
       --accent-emerald: #00c87a;
@@ -22,8 +34,29 @@
       --glass: rgba(0, 200, 122, 0.05);
       --gradient-page: linear-gradient(135deg, #0a0a0a 0%, #0d1f17 50%, #050505 100%);
       --gold-shimmer: linear-gradient(90deg, #c9a84c, #f5d98a, #c9a84c);
+      --nav-bg: rgba(5, 5, 5, 0.75);
+      --border-soft: rgba(201, 168, 76, 0.25);
+      --ambient-opacity: 0.28;
+      --hero-canvas-op: 0.22;
       --font-serif: "Cormorant Garamond", Georgia, serif;
       --font-sans: "Outfit", system-ui, sans-serif;
+    }
+    [data-theme="light"] {
+      color-scheme: light;
+      --bg-deep: #ece8df;
+      --bg-rich: #f7f4ee;
+      --accent-emerald: #0d7a52;
+      --accent-gold: #9a7b2e;
+      --accent-sage: #3d7a5c;
+      --text-off: #1c1b19;
+      --text-cream: #3d3830;
+      --glass: rgba(0, 100, 70, 0.06);
+      --gradient-page: linear-gradient(135deg, #f7f4ee 0%, #e8f0ec 50%, #ebe6dc 100%);
+      --gold-shimmer: linear-gradient(90deg, #9a7b2e, #c9a84c, #9a7b2e);
+      --nav-bg: rgba(247, 244, 238, 0.92);
+      --border-soft: rgba(154, 123, 46, 0.35);
+      --ambient-opacity: 0.12;
+      --hero-canvas-op: 0.12;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -124,12 +157,34 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: 9000;
+      z-index: 100;
       opacity: 0.03;
       mix-blend-mode: overlay;
     }
 
     /* --- Back to top --- */
+    .theme-toggle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--border-soft);
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      color: var(--accent-gold);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.25s, transform 0.25s;
+      margin-right: 0.5rem;
+    }
+    .theme-toggle:hover { border-color: var(--accent-emerald); transform: scale(1.05); }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
     .back-top {
       position: fixed;
       bottom: 2rem;
@@ -138,7 +193,7 @@
       height: 48px;
       border-radius: 50%;
       border: 1px solid var(--accent-gold);
-      background: rgba(10, 10, 10, 0.8);
+      background: var(--nav-bg);
       backdrop-filter: blur(12px);
       color: var(--accent-gold);
       font-size: 1.25rem;
@@ -168,9 +223,12 @@
       transition: background 0.4s, backdrop-filter 0.4s, box-shadow 0.4s;
     }
     .navbar.scrolled {
-      background: rgba(5, 5, 5, 0.75);
+      background: var(--nav-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+    [data-theme="dark"] .navbar.scrolled {
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
     .logo-wrap {
@@ -283,11 +341,43 @@
     /* --- Hero --- */
     .hero {
       position: relative;
-      min-height: 100vh;
+      min-height: min(100vh, 900px);
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+    }
+    .hero-media {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero-media-img,
+    .hero-media video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-media video {
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    .hero-media video.is-ready {
+      opacity: 1;
+    }
+    .hero-media-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background: linear-gradient(180deg, rgba(5, 5, 5, 0.45) 0%, rgba(5, 5, 5, 0.65) 45%, rgba(5, 5, 5, 0.85) 100%);
+      pointer-events: none;
+    }
+    [data-theme="light"] .hero-media-scrim {
+      background: linear-gradient(180deg, rgba(247, 244, 238, 0.75) 0%, rgba(247, 244, 238, 0.88) 100%);
     }
     #hero-canvas {
       position: absolute;
@@ -295,7 +385,9 @@
       width: 100%;
       height: 100%;
       display: block;
-      z-index: 1;
+      z-index: 4;
+      opacity: var(--hero-canvas-op);
+      pointer-events: none;
     }
     .hero-fallback {
       position: absolute;
@@ -309,14 +401,17 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.75) 100%);
-      z-index: 2;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.55) 100%);
+      z-index: 5;
+    }
+    [data-theme="light"] .hero-vignette {
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(255, 255, 255, 0.5) 100%);
     }
     .hero-inner {
       position: relative;
-      z-index: 2;
+      z-index: 6;
       text-align: center;
-      padding: 8rem 1.5rem 6rem;
+      padding: 7rem 1.25rem 4rem;
       max-width: 960px;
     }
     .hero-line {
@@ -341,15 +436,15 @@
     }
     .hero-title .char {
       display: inline-block;
-      opacity: 0;
+      opacity: 1;
     }
     .hero-sub {
       font-size: 1.1rem;
       font-weight: 300;
       color: var(--text-cream);
       max-width: 520px;
-      margin: 0 auto 2.5rem;
-      opacity: 0;
+      margin: 0 auto 2rem;
+      opacity: 1;
     }
     .hero-ctas {
       display: flex;
@@ -428,10 +523,10 @@
 
     .scroll-hint {
       position: absolute;
-      bottom: 2rem;
+      bottom: 1.5rem;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 3;
+      z-index: 7;
       text-align: center;
       font-size: 0.7rem;
       letter-spacing: 0.2em;
@@ -455,9 +550,9 @@
 
     .hero-badge {
       position: absolute;
-      bottom: 2rem;
+      bottom: 1.5rem;
       right: 4%;
-      z-index: 3;
+      z-index: 7;
       padding: 0.75rem 1.25rem;
       background: var(--glass);
       backdrop-filter: blur(20px);
@@ -498,7 +593,7 @@
       overflow: hidden;
     }
     .section-head {
-      padding: 5rem 4% 2rem;
+      padding: 2.75rem 4% 1.25rem;
       text-align: center;
     }
     .section-label {
@@ -517,6 +612,11 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+    }
+    .section-title .char,
+    .booking-title .char {
+      display: inline-block;
+      opacity: 1;
     }
     .services-pin-wrap {
       position: relative;
@@ -655,7 +755,7 @@
 
     /* --- Stats --- */
     .stats-section {
-      padding: 4rem 4%;
+      padding: 2.5rem 4%;
       background: var(--bg-deep);
       border-top: 1px solid rgba(201, 168, 76, 0.15);
       border-bottom: 1px solid rgba(201, 168, 76, 0.15);
@@ -697,7 +797,7 @@
 
     /* --- Gallery --- */
     .gallery-section {
-      padding: 5rem 4% 4rem;
+      padding: 3rem 4% 2.5rem;
       background: var(--bg-rich);
       position: relative;
       overflow: hidden;
@@ -706,7 +806,7 @@
       column-count: 3;
       column-gap: 1.25rem;
       max-width: 1200px;
-      margin: 3rem auto 0;
+      margin: 2rem auto 0;
       transform-style: preserve-3d;
       perspective: 1400px;
     }
@@ -786,7 +886,7 @@
 
     /* --- Team --- */
     .team-section {
-      padding: 5rem 4%;
+      padding: 3rem 4% 3.5rem;
       background: var(--gradient-page);
     }
     .team-grid {
@@ -840,7 +940,7 @@
 
     /* --- Testimonials --- */
     .testimonials-section {
-      padding: 5rem 4%;
+      padding: 3rem 4% 3.5rem;
       background: var(--bg-deep);
     }
     .testimonial-slider {
@@ -911,7 +1011,7 @@
 
     /* --- Booking CTA --- */
     .booking-section {
-      padding: 6rem 4%;
+      padding: 3.5rem 4% 4rem;
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -951,7 +1051,7 @@
 
     /* --- Footer --- */
     .footer {
-      padding: 4rem 4% 2rem;
+      padding: 2.5rem 4% 1.5rem;
       border-top: 1px solid rgba(201, 168, 76, 0.25);
       background: var(--bg-deep);
     }
@@ -1009,10 +1109,10 @@
       color: var(--accent-emerald);
     }
 
-    /* --- Generic section animation hook --- */
+    /* --- Reveal: default VISIBLE (gsap.from only; CSS opacity:0 was keeping sections blank) --- */
     .reveal-section {
-      opacity: 0;
-      transform: translateY(80px);
+      opacity: 1;
+      transform: none;
     }
 
     /* --- Ambient 3D accents (CSS + JS scroll tie-in) --- */
@@ -1023,7 +1123,11 @@
       height: 100%;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.35;
+      opacity: var(--ambient-opacity);
+    }
+    main {
+      position: relative;
+      z-index: 4;
     }
     main > section,
     .marquee-strip,
@@ -1049,7 +1153,8 @@
 
     /* --- Responsive --- */
     @media (max-width: 768px) {
-      .nav-links, .nav-cta { display: none; }
+      .nav-links { display: none; }
+      .nav-actions .nav-cta { display: none; }
       .hamburger { display: flex; }
       .gallery-masonry { column-count: 2; }
       .team-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1125,7 +1230,10 @@
       <a href="#team" class="nav-link">Team</a>
       <a href="#contact" class="nav-link">Contact</a>
     </nav>
-    <a href="#booking" class="nav-cta magnetic-target">Book Now</a>
+    <div class="nav-actions">
+      <button type="button" class="theme-toggle js-theme-toggle" id="themeToggle" title="Light / Dark mode" aria-label="Toggle light and dark mode"><span class="theme-icon">☀</span></button>
+      <a href="#booking" class="nav-cta magnetic-target">Book Now</a>
+    </div>
     <button type="button" class="hamburger" id="hamburger" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
@@ -1137,12 +1245,20 @@
     <a href="#gallery" class="nav-link">Gallery</a>
     <a href="#team" class="nav-link">Team</a>
     <a href="#contact" class="nav-link">Contact</a>
+    <button type="button" class="theme-toggle js-theme-toggle" style="width:100%;margin-bottom:0.5rem;border-radius:8px;">Theme: <span class="theme-icon">☀</span></button>
     <a href="#booking" class="nav-cta" style="text-align:center;">Book Now</a>
   </nav>
 
   <main>
     <!-- Hero -->
     <section class="hero" id="home">
+      <div class="hero-media" aria-hidden="true">
+        <img class="hero-media-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&amp;fit=crop&amp;w=1920&amp;q=92" alt="" width="1920" height="1080" fetchpriority="high" decoding="async" />
+        <video id="heroVideo" class="hero-bg-video" muted loop playsinline autoplay preload="metadata" poster="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&amp;fit=crop&amp;w=1920&amp;q=85">
+          <source src="https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_30fps.mp4" type="video/mp4" />
+        </video>
+        <div class="hero-media-scrim"></div>
+      </div>
       <canvas id="hero-canvas"></canvas>
       <div class="hero-fallback" id="heroFallback" aria-hidden="true"></div>
       <div class="hero-vignette"></div>
@@ -1488,6 +1604,36 @@
         if (typeof ScrollTrigger !== "undefined") ScrollTrigger.refresh();
       });
 
+      /* Theme (light / dark) */
+      function getTheme() {
+        return document.documentElement.getAttribute("data-theme") || "dark";
+      }
+      function syncThemeIcons() {
+        var dark = getTheme() === "dark";
+        document.querySelectorAll(".js-theme-toggle .theme-icon").forEach(function (el) {
+          el.textContent = dark ? "☀" : "☾";
+        });
+      }
+      function toggleTheme() {
+        var next = getTheme() === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("royal-theme", next);
+        syncThemeIcons();
+      }
+      syncThemeIcons();
+      document.querySelectorAll(".js-theme-toggle").forEach(function (btn) {
+        btn.addEventListener("click", function () { toggleTheme(); });
+      });
+
+      /* Hero video — fade in when playable */
+      var heroVideo = document.getElementById("heroVideo");
+      if (heroVideo) {
+        heroVideo.addEventListener("canplay", function () {
+          heroVideo.classList.add("is-ready");
+        });
+        heroVideo.play().catch(function () {});
+      }
+
       /* Loader — min display + wait for assets */
       const loader = document.getElementById("pageLoader");
       const loaderStart = Date.now();
@@ -1827,7 +1973,6 @@
         animate();
 
         function onResize() {
-          if (isMobile()) return;
           camera.aspect = window.innerWidth / window.innerHeight;
           camera.updateProjectionMatrix();
           renderer.setSize(window.innerWidth, window.innerHeight);
@@ -1882,9 +2027,10 @@
           function servicesScrollDistance() {
             var track = document.getElementById("servicesTrack");
             var sticky = document.querySelector(".services-pin-sticky");
-            if (!track || !sticky) return window.innerHeight;
+            if (!track || !sticky) return Math.min(window.innerHeight * 2.2, 1800);
             var w = sticky.offsetWidth || window.innerWidth;
-            return Math.max(window.innerHeight * 0.85, track.scrollWidth - w + 96);
+            var raw = Math.max(window.innerHeight * 0.55, track.scrollWidth - w + 48);
+            return Math.min(raw, window.innerHeight * 2.5);
           }
 
           ScrollTrigger.matchMedia({
